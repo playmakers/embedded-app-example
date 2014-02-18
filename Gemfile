@@ -7,6 +7,9 @@ gem 'shopify_app'
 gem 'jquery-rails'
 gem 'quiet_assets'
 
+gem 'unicorn'
+gem 'rails_12factor', group: :production
+
 group :assets do
   gem 'sass-rails'
   # gem 'coffee-rails', '~> 3.2.1'
@@ -14,7 +17,6 @@ group :assets do
 end
 
 group :development, :test do
-  gem 'thin'
   gem "less-rails-bootstrap"
   gem "therubyracer", :platforms => :ruby
   gem 'pry-rails'
