@@ -31,21 +31,25 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(express.static(path.join(__dirname, 'public')));
 
 //use jade templating engine for view rendering
-// app.set('view engine', 'jade');
+app.set('view engine', 'jade');
 
 //use the environment's port if specified
 app.set('port', process.env.PORT || 3000);
 
-// var appAuth = new shopifyAuth.AppAuth();
-
 // //configure routes
 app.get('/', function (req, res) {
-  res.send('hello, world!')
+  res.render('index', {
+    apiKey: 'Hey',
+    shopOrigin: 'Hello there!'
+  });
 })
+
+// var appAuth = new shopifyAuth.AppAuth();
 // app.get('/auth_app', appAuth.initAuth);
 // app.get('/escape_iframe', appAuth.escapeIframe);
 // app.get('/auth_code', appAuth.getCode);
 // app.get('/auth_token', appAuth.getAccessToken);
+
 // app.get('/render_app', routes.renderApp);
 
 app.listen(app.get('port'), function() {
