@@ -1,15 +1,17 @@
 
 var express = require('express'),
   morgan = require('morgan'),
-  bodyParser = require('body-parser');
+  bodyParser = require('body-parser'),
+  shopifyAuthController = require('./controllers/shopify_auth');
 
-// //load settings from environment config
-// nconf.argv().env().file({
-//     file: (process.env.NODE_ENV || 'dev') + '-settings.json'
-// });
-// exports.nconf = nconf;
+var port = process.env.PORT || 3000,
+    shopifyOptions = {
+      apiKey:       process.env.SHOPIFY_API_KEY,
+      apiSecret:    process.env.SHOPIFY_API_SECRET,
+      redirectUri:  process.env.SHOPIFY_REDIRECT_URI || "http://localhost:3000",
+      scope:        "read_products"
+    };
 
-//configure express
 var app = express();
 
 //log all requests
@@ -34,9 +36,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.set('view engine', 'jade');
 
 //use the environment's port if specified
-app.set('port', process.env.PORT || 3000);
+app.set('port', port);
 
-// //configure routes
+// routes
 app.get('/', function (req, res) {
   res.render('index', {
     apiKey: 'Hey',
@@ -44,11 +46,12 @@ app.get('/', function (req, res) {
   });
 })
 
-// var appAuth = new shopifyAuth.AppAuth();
-// app.get('/auth_app', appAuth.initAuth);
-// app.get('/escape_iframe', appAuth.escapeIframe);
-// app.get('/auth_code', appAuth.getCode);
-// app.get('/auth_token', appAuth.getAccessToken);
+var appAuth = new shopifyAuthController.ShopifyAuth(shopifyOptions, '/');
+
+app.get('/auth_app', appAuth.initAuth);
+app.get('/escape_iframe', appAuth.escapeIframe);
+app.get('/auth_code', appAuth.getCode);
+app.get('/auth_token', appAuth.getAccessToken);
 
 // app.get('/render_app', routes.renderApp);
 
