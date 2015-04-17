@@ -2,14 +2,11 @@ doctype html
 html
   head
     link(rel='stylesheet', href='/style.css')
-    script(src='/jquery-2.1.3.min.js')
     script(src='https://cdn.shopify.com/s/assets/external/app.js')
-    script(src='/scripts.js')
     script.
       ShopifyApp.init({
         apiKey:       '#{apiKey}',
-        shopOrigin:   '#{shopUrl}',
-        access_token: '#{accessToken}'
+        shopOrigin:   '#{shopUrl}'
       });
 
   body

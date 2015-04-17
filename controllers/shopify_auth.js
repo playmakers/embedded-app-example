@@ -1,8 +1,5 @@
 /*
- * Shopify Embedded App. skeleton.
- *
- * Copyright 2014 Richard Bremner
- * richard@codezuki.com
+ * Shopify Auth
  */
 
 var shopifyAPI = require('shopify-node-api');
@@ -55,6 +52,7 @@ exports.ShopifyAuth = function(options, successUri) {
         return;
       } else {
         req.session.shopUrl = shop;
+        console.log(data['access_token']);
         req.session.oauth_access_token = data['access_token'];
         res.redirect(successUri);
       }

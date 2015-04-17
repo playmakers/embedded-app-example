@@ -1,18 +1,22 @@
 
-var express = require('express'),
-  compression = require('compression'),
-  morgan = require('morgan'),
-  bodyParser = require('body-parser'),
-  session = require('express-session')
-  shopifyAuthController = require('./controllers/shopify_auth');
+var express             = require('express'),
+  compression           = require('compression'),
+  morgan                = require('morgan'),
+  bodyParser            = require('body-parser'),
+  session               = require('express-session')
+  shopifyAuthController = require('./controllers/shopify_auth')
+  shopifyAPI            = require('shopify-node-api');
 
 var port = process.env.PORT || 3000,
   shopifyOptions = {
     shopify_api_key:       process.env.SHOPIFY_APP_API_KEY,
     shopify_shared_secret: process.env.SHOPIFY_APP_API_SECRET,
     shopify_scope:        'read_products',
-    redirect_uri:          process.env.SHOPIFY_REDIRECT_URI || 'http://localhost:3000'
-  };
+    redirect_uri:          process.env.SHOPIFY_REDIRECT_URI || 'http://localhost:3000',
+    access_token:          process.env.TOKEN,
+    shop:                  process.env.SHOP
+  },
+  Shopify = new shopifyAPI(shopifyOptions);
 
 var app = express();
 app.use(compression());
@@ -71,10 +75,34 @@ app.get('/success', function (req, res) {
 });
 
 app.get('/products', function (req, res) {
-  res.render('index', {
+  res.render('products', {
     apiKey: shopifyOptions.shopify_api_key,
     shopOrigin: req.session.shopUrl || 'playmakers-test.myshopify.com',
-    accessToken: req.session.oauth_access_token,
+  });
+});
+
+// Shopify Proxy
+app.get('/shopify/:action.json', function (req, res) {
+  Shopify.get('/admin/' + req.params.action + '.json', function(err, data, headers) {
+    res.send(data)
+  });
+});
+
+app.post('/shopify/:action.json', function (req, res) {
+  Shopify.post('/admin/' + req.params.action + '.json', post_data, function(err, data, headers) {
+    res.send(data)
+  });
+});
+
+app.put('/shopify/:action.json', function (req, res) {
+  Shopify.put('/admin/' + req.params.action + '.json', put_data, function(err, data, headers) {
+    res.send(data)
+  });
+});
+
+app.delete('/shopify/:action.json', function (req, res) {
+  Shopify.delete('/admin/' + req.params.action + '.json', function(err, data, headers) {
+    res.send(data)
   });
 });
 
