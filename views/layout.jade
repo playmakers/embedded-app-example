@@ -3,7 +3,18 @@ html
   head
     link(rel='stylesheet', href='/stylesheets/style.css')
     script(src='https://cdn.shopify.com/s/assets/external/app.js')
+    script(src='/scripts.js')
     script.
+      ShopifyApp.init({
+        apiKey:       '#{apiKey}',
+        shopOrigin:   '#{shopUrl}',
+        access_token: '#{accessToken}'
+      });
+      var Shopify = new shopifyAPI({
+          shop: '#{shopOrigin}',
+          shopify_api_key: '#{apiKey}'
+      });
+
 
   body
     block content

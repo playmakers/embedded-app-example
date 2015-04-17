@@ -15,8 +15,8 @@ var port = process.env.PORT || 3000,
 
 var app = express();
 
-// //statically serve from the 'public' folder
-// app.use(express.static(path.join(__dirname, 'public')));
+//statically serve from the 'public' folder
+app.use(express.static(__dirname + '/public'));
 
 //log all requests
 app.use(morgan('combined'));
@@ -62,8 +62,17 @@ app.get('/', function (req, res) {
 
 app.get('/success', function (req, res) {
   res.render('index', {
-    apiKey: 'Hey' + req.session.oauth_access_token,
-    shopOrigin: 'Hello there!' + req.session.shopUrl
+    apiKey: shopifyOptions.shopify_api_key,
+    shopOrigin: req.session.shopUrl,
+    accessToken: req.session.oauth_access_token,
+  });
+});
+
+app.get('/products', function (req, res) {
+  res.render('index', {
+    apiKey: shopifyOptions.shopify_api_key,
+    shopOrigin: req.session.shopUrl,
+    accessToken: req.session.oauth_access_token,
   });
 });
 
