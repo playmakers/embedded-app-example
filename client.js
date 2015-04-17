@@ -1,2 +1,2 @@
-var shopifyAPI = require('shopify-node-api');
+shopifyAPI = require('shopify-node-api');
 

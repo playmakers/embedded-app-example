@@ -73,7 +73,7 @@ app.get('/success', function (req, res) {
 app.get('/products', function (req, res) {
   res.render('index', {
     apiKey: shopifyOptions.shopify_api_key,
-    shopOrigin: req.session.shopUrl,
+    shopOrigin: req.session.shopUrl || 'playmakers-test.myshopify.com',
     accessToken: req.session.oauth_access_token,
   });
 });

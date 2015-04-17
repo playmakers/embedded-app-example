@@ -1,7 +1,8 @@
 doctype html
 html
   head
-    link(rel='stylesheet', href='/stylesheets/style.css')
+    link(rel='stylesheet', href='/style.css')
+    script(src='/jquery-2.1.3.min.js')
     script(src='https://cdn.shopify.com/s/assets/external/app.js')
     script(src='/scripts.js')
     script.
@@ -10,11 +11,6 @@ html
         shopOrigin:   '#{shopUrl}',
         access_token: '#{accessToken}'
       });
-      var Shopify = new shopifyAPI({
-          shop: '#{shopOrigin}',
-          shopify_api_key: '#{apiKey}'
-      });
-
 
   body
     block content

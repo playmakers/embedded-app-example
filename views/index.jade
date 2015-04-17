@@ -1,8 +1,17 @@
 extends layout
 
 block content
-  h1 HI INDEX
+  h1 HI
 
 
-  h2 apiKey: '#{apiKey}',
-  h2 shopOrigin: '#{shopOrigin}'
+  script.
+    $(function() {
+      var Shopify = new shopifyAPI({
+          shop: '#{shopOrigin}',
+          shopify_api_key: '#{apiKey}'
+      });
+      Shopify.get('/admin/products.json', function(err, data, headers){
+        console.log(data); // Data contains product json information
+        console.log(headers); // Headers returned from request
+      });
+    });
