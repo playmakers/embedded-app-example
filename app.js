@@ -4,16 +4,6 @@ var express = require('express'),
   bodyParser = require('body-parser'),
   session = require('express-session')
   shopifyAuthController = require('./controllers/shopify_auth');
-//   shopifyAPI = require('shopify-node-api');
-
-
-// var Shopify = new shopifyAPI({
-//                 shop: 'MYSHOP', // MYSHOP.myshopify.com
-//                 shopify_api_key: process.env.SHOPIFY_APP_API_KEY,
-//                 shopify_shared_secret: process.env.SHOPIFY_APP_API_SECRET,
-//                 shopify_scope: 'write_products',
-//                 redirect_uri: process.env.SHOPIFY_REDIRECT_URI || "http://localhost:3000",
-//             });
 
 var port = process.env.PORT || 3000,
   shopifyOptions = {
@@ -72,7 +62,7 @@ app.get('/', function (req, res) {
 
 app.get('/success', function (req, res) {
   res.render('index', {
-    apiKey: 'Hey',
+    apiKey: 'Hey' + req.session.oauth_access_token,
     shopOrigin: 'Hello there!' + req.session.shopUrl
   });
 });
@@ -80,8 +70,7 @@ app.get('/success', function (req, res) {
 var appAuth = new shopifyAuthController.ShopifyAuth(shopifyOptions, '/success');
 
 app.get('/auth_app',      appAuth.initAuth);
-app.get('/escape_iframe', appAuth.escapeIframe);
-app.get('/auth_code',     appAuth.getCode);
+app.get('/auth',          appAuth.startAuth);
 app.get('/auth_token',    appAuth.getAccessToken);
 
 // app.get('/render_app', routes.renderApp);
@@ -89,38 +78,3 @@ app.get('/auth_token',    appAuth.getAccessToken);
 app.listen(app.get('port'), function() {
   console.log('Listening on port ' + app.get('port'));
 });
-
-
-// /*
-//  * Get /
-//  *
-//  * if we already have an access token then
-//  * redirect to render the app, otherwise
-//  * redirect to app authorisation.
-//  */
-exports.index = function(req, res){
-    if (!req.session.oauth_access_token) {
-        var parsedUrl = url.parse(req.originalUrl, true);
-        if (parsedUrl.query && parsedUrl.query.shop) {
-            req.session.shopUrl = 'https://' + parsedUrl.query.shop;
-        }
-
-        res.redirect("/auth_app");
-    }
-    else {
-        res.redirect("/render_app");
-    }
-};
-
-// /*
-//  * Get /render_app
-//  *
-//  * render the main app view
-//  */
-// exports.renderApp = function(req, res){
-//     res.render('app_view', {
-//         title: 'My App Title',
-//         apiKey: app.nconf.get('oauth:api_key'),
-//         shopUrl: req.session.shopUrl
-//     });
-// };

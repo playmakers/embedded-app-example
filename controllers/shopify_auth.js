@@ -5,8 +5,7 @@
  * richard@codezuki.com
  */
 
-var OAuth = require('oauth').OAuth2,
-  url = require('url');
+var shopifyAPI = require('shopify-node-api');
 
 exports.ShopifyAuth = function(options, successUri) {
   var self = this;
@@ -18,23 +17,12 @@ exports.ShopifyAuth = function(options, successUri) {
    */
   this.initAuth = function(req, res){
     if (!req.session.oauth_access_token) {
-      res.redirect('/escape_iframe');
+      res.render('escape_iframe', {
+        authPath: '/auth'
+      });
     } else {
       res.redirect(successUri);
     }
-  };
-
-  /*
-   * Get /escape_iframe
-   *
-   * renders a view that contains javascript
-   * which will change the browser top window
-   * location to start the oauth process
-   *
-   * See http://docs.shopify.com/embedded-app-sdk/getting-started#oauth
-   */
-  this.escapeIframe = function(req, res) {
-    res.render('escape_iframe');
   };
 
   /*
@@ -44,13 +32,11 @@ exports.ShopifyAuth = function(options, successUri) {
    * for a permanent token. User may be prompted to accept
    * the scope being requested
    */
-  this.getCode = function(req, res) {
-    var redirectUrl = self.OAuth(req.session.shopUrl).getAuthorizeUrl({
-      redirect_uri: options.redirect_uri + '/auth_token',
-      scope: options.shopify_scope
-    });
-    console.log(redirectUrl);
-    res.redirect(redirectUrl);
+  this.startAuth = function(req, res) {
+    var shop = 'https://' + req.query.shop;
+    var authUrl = self.ShopifyAPI(shop).buildAuthURL();
+    console.log(authUrl);
+    res.redirect(authUrl);
   };
 
   /*
@@ -61,31 +47,27 @@ exports.ShopifyAuth = function(options, successUri) {
    * not expire
    */
   this.getAccessToken = function(req, res) {
-    var parsedUrl = url.parse(req.originalUrl, true);
+    var shop = req.session.shopUrl || req.query.shop;
 
-    console.log(parsedUrl.query.code);
-    self.OAuth(req.session.shopUrl).getOAuthAccessToken(
-      parsedUrl.query.code,
-      {},
-      function(error, access_token, refresh_token) {
-        if (error) {
-          console.log(error);
-          res.sendStatus(500);
-          return;
-        } else {
-          req.session.oauth_access_token = access_token;
-          res.redirect(successUri);
-        }
+    self.ShopifyAPI(shop).exchange_temporary_token(req.query, function(err, data) {
+      if (err) {
+        res.sendStatus(500);
+        return;
+      } else {
+        req.session.shopUrl = shop;
+        req.session.oauth_access_token = data['access_token'];
+        res.redirect(successUri);
       }
-    );
+    });
   };
 
-  this.OAuth = function(shopUrl) {
-    return new OAuth(
-      options.shopify_api_key,
-      options.shopify_shared_secret,
-      shopUrl,
-      '/admin/oauth/authorize',
-      '/admin/oauth/access_token');
+  this.ShopifyAPI = function(shopUrl) {
+    return new shopifyAPI({
+      shop: shopUrl,
+      shopify_api_key: options.shopify_api_key,
+      shopify_shared_secret: options.shopify_shared_secret,
+      shopify_scope: options.shopify_scope,
+      redirect_uri: options.redirect_uri + '/auth_token'
+    });
   }
 }
