@@ -1,5 +1,6 @@
 
 var express = require('express'),
+  compression = require('compression'),
   morgan = require('morgan'),
   bodyParser = require('body-parser'),
   session = require('express-session')
@@ -14,6 +15,7 @@ var port = process.env.PORT || 3000,
   };
 
 var app = express();
+app.use(compression());
 
 //statically serve from the 'public' folder
 app.use(express.static(__dirname + '/public'));
