@@ -46,9 +46,10 @@ exports.ShopifyAuth = function(options, successUri) {
    */
   this.getCode = function(req, res) {
     var redirectUrl = self.OAuth(req.session.shopUrl).getAuthorizeUrl({
-      redirect_uri: options.redirectUri + '/auth_token',
-      scope: options.scope
+      redirect_uri: options.redirect_uri + '/auth_token',
+      scope: options.shopify_scope
     });
+    console.log(redirectUrl);
     res.redirect(redirectUrl);
   };
 
@@ -62,12 +63,14 @@ exports.ShopifyAuth = function(options, successUri) {
   this.getAccessToken = function(req, res) {
     var parsedUrl = url.parse(req.originalUrl, true);
 
+    console.log(parsedUrl.query.code);
     self.OAuth(req.session.shopUrl).getOAuthAccessToken(
       parsedUrl.query.code,
       {},
       function(error, access_token, refresh_token) {
         if (error) {
-          res.send(500);
+          console.log(error);
+          res.sendStatus(500);
           return;
         } else {
           req.session.oauth_access_token = access_token;
@@ -79,8 +82,8 @@ exports.ShopifyAuth = function(options, successUri) {
 
   this.OAuth = function(shopUrl) {
     return new OAuth(
-      options.apiKey,
-      options.apiSecret,
+      options.shopify_api_key,
+      options.shopify_shared_secret,
       shopUrl,
       '/admin/oauth/authorize',
       '/admin/oauth/access_token');
