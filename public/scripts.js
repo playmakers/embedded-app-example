@@ -34,11 +34,12 @@ var app        = require('./app'),
 
 module.exports = Backbone.Router.extend({
   routes: {
-    "": "_index"
+    "/products": "_index"
   },
 
   _index: function(itemId) {
-    $('.products').html(new ProductsView({ }).$el);
+    console.log('index');
+    $('#products').html(new ProductsView({ }).$el);
   },
 });
 
@@ -74,18 +75,20 @@ var $ = require('jquery'),
 Backbone.$ = $;
 
 module.exports = Backbone.View.extend({
-  template: _.template($('#browserTemplate').html()),
+  // template: _.template($('#browserTemplate').html()),
 
-  events: {
-    "click #create": "createNew",
-  },
+  // events: {
+  //   "click #create": "createNew",
+  // },
 
   initialize: function(){
     _.bindAll(this, 'render');
+    this.render();
   },
 
   render: function() {
-    this.$el.html("");
+    console.log('render');
+    this.$el.html("products");
 
     return this;
   }

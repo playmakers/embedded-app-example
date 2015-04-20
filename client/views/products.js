@@ -6,18 +6,20 @@ var $ = require('jquery'),
 Backbone.$ = $;
 
 module.exports = Backbone.View.extend({
-  template: _.template($('#browserTemplate').html()),
+  // template: _.template($('#browserTemplate').html()),
 
-  events: {
-    "click #create": "createNew",
-  },
+  // events: {
+  //   "click #create": "createNew",
+  // },
 
   initialize: function(){
     _.bindAll(this, 'render');
+    this.render();
   },
 
   render: function() {
-    this.$el.html("");
+    console.log('render');
+    this.$el.html("products");
 
     return this;
   }

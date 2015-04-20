@@ -3,11 +3,12 @@ html
   head
     link(rel='stylesheet', href='/style.css')
     script(src='https://cdn.shopify.com/s/assets/external/app.js')
-    script.
-      ShopifyApp.init({
-        apiKey:       '#{apiKey}',
-        shopOrigin:   '#{shopUrl}'
-      });
+    if esdk
+      script.
+        ShopifyApp.init({
+          apiKey:       '#{apiKey}',
+          shopOrigin:   '#{shopUrl}'
+        });
 
   body
     block content

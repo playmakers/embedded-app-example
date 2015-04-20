@@ -14,6 +14,7 @@ module.exports = Backbone.Router.extend({
   },
 
   _index: function(itemId) {
-    $('.products').html(new ProductsView({ }).$el);
+    console.log('index');
+    $('#products').html(new ProductsView({ }).$el);
   },
 });

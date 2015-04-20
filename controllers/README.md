@@ -11,3 +11,4 @@ http://stackoverflow.com/questions/14418415/shopify-how-can-i-handle-an-uninstal
 
 # sources:
 - https://www.airpair.com/node.js/posts/nodejs-framework-comparison-express-koa-hapi
+- https://github.com/richardbremner/shopify_embedded_app
