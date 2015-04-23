@@ -1,6 +1,6 @@
 var $ = require('jquery');
 
 module.exports = {
-  root: "/",
+  root: "/products",
   router: null,
 };

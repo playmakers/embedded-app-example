@@ -6,7 +6,8 @@ var $ = require('jquery'),
 Backbone.$ = $;
 
 var app        = require('./app'),
-  ProductsView = require('../views/products');
+  ProductsView = require('../views/products'),
+  Products     = require('../models/products');
 
 module.exports = Backbone.Router.extend({
   routes: {
@@ -14,7 +15,8 @@ module.exports = Backbone.Router.extend({
   },
 
   _index: function(itemId) {
-    console.log('index');
-    $('#products').html(new ProductsView({ }).$el);
+    var products = new Products();
+    products.fetch({reset: true});
+    $('#products').html(new ProductsView({collection: products}).$el);
   },
 });

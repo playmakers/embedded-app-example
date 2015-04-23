@@ -1,12 +1,12 @@
 var $ = require('jquery'),
   _ = require('underscore'),
   Backbone     = require('backbone'),
-  Products  = require('../models/products');
+  ProductView  = require('./product');
 
 Backbone.$ = $;
 
 module.exports = Backbone.View.extend({
-  // template: _.template($('#browserTemplate').html()),
+  template: _.template($('#productsTemplate').html()),
 
   // events: {
   //   "click #create": "createNew",
@@ -14,13 +14,26 @@ module.exports = Backbone.View.extend({
 
   initialize: function(){
     _.bindAll(this, 'render');
+    this.collection.bind("reset", _.bind(this.render, this));
     this.render();
   },
 
-  render: function() {
-    console.log('render');
-    this.$el.html("products");
+  renderProducts: function(content) {
+    this.collection.forEach(function(product) {
+      var productView = new ProductView({ model: product });
+      content.append(productView.render().el);
+    }, this);
+  },
 
+  render: function() {
+    this.$el.html(this.template());
+
+    if (this.collection.length > 0) {
+      this.renderProducts(this.$el.find("tbody"));
+    } else {
+      console.log('nix da');
+      // this.$el.html(this.template());
+    }
     return this;
   }
 });

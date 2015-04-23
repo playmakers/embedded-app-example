@@ -80,7 +80,7 @@ app.get('/products', function (req, res) {
   res.render('products', {
     esdk: esdk,
     apiKey: shopifyOptions.shopify_api_key,
-    shopOrigin: req.session.shopUrl || 'playmakers-test.myshopify.com'
+    shopOrigin: req.session.shopUrl || shopifyOptions.shop
   });
 });
 

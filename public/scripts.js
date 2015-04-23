@@ -13,15 +13,24 @@ window.app = app; // Debug
 
 Backbone.history.start({ pushState: true, root: app.root });
 
-},{"./lib/app":2,"./lib/router":3,"backbone":7,"jquery":9}],2:[function(require,module,exports){
+
+// var app = new Marionette.Application();
+
+// app.on('start', function() {
+//   Backbone.history.start();
+// });
+
+// app.start();
+
+},{"./lib/app":2,"./lib/router":3,"backbone":8,"jquery":10}],2:[function(require,module,exports){
 var $ = require('jquery');
 
 module.exports = {
-  root: "/",
+  root: "/products",
   router: null,
 };
 
-},{"jquery":9}],3:[function(require,module,exports){
+},{"jquery":10}],3:[function(require,module,exports){
 "use strict";
 
 var $ = require('jquery'),
@@ -30,52 +39,88 @@ var $ = require('jquery'),
 Backbone.$ = $;
 
 var app        = require('./app'),
-  ProductsView = require('../views/products');
+  ProductsView = require('../views/products'),
+  Products     = require('../models/products');
 
 module.exports = Backbone.Router.extend({
   routes: {
-    "/products": "_index"
+    "": "_index"
   },
 
   _index: function(itemId) {
-    console.log('index');
-    $('#products').html(new ProductsView({ }).$el);
+    var products = new Products();
+    products.fetch({reset: true});
+    $('#products').html(new ProductsView({collection: products}).$el);
   },
 });
 
-},{"../views/products":6,"./app":2,"backbone":7,"jquery":9}],4:[function(require,module,exports){
+},{"../models/products":5,"../views/products":7,"./app":2,"backbone":8,"jquery":10}],4:[function(require,module,exports){
 var $ = require('jquery'),
   _ = require('underscore'),
-  Backbone          = require('backbone');
+  Backbone = require('backbone');
 
 module.exports = Backbone.Model.extend({
 
   initialize: function() {
+    _.bindAll(this, 'title');
+  },
 
+  title: function() {
+    return this.get('title')
   }
 });
 
-},{"backbone":7,"jquery":9,"underscore":10}],5:[function(require,module,exports){
+},{"backbone":8,"jquery":10,"underscore":11}],5:[function(require,module,exports){
 var $ = require('jquery'),
   Backbone     = require('backbone'),
   Product      = require('./product');
 
 module.exports = Backbone.Collection.extend({
 
-  model: Product
+  model: Product,
+
+  url: '/shopify/products.json',
+
+  initialize: function() {
+    // this.fetch();
+  }
 
 });
 
-},{"./product":4,"backbone":7,"jquery":9}],6:[function(require,module,exports){
+},{"./product":4,"backbone":8,"jquery":10}],6:[function(require,module,exports){
+var $ = require('jquery'),
+  _ = require('underscore'),
+  Backbone = require('backbone');
+
+module.exports = Backbone.View.extend({
+  template: _.template($('#productTemplate').html()),
+
+  tagName: 'tr',
+
+  initialize: function() {
+    _.bindAll(this, 'render');
+    // this.render();
+  },
+
+  render: function() {
+    this.$el.html(this.template({
+      title: this.model.get('title')
+    }));
+    return this;
+  }
+
+});
+
+},{"backbone":8,"jquery":10,"underscore":11}],7:[function(require,module,exports){
 var $ = require('jquery'),
   _ = require('underscore'),
   Backbone     = require('backbone'),
-  Products  = require('../models/products');
+  ProductView  = require('./product');
 
 Backbone.$ = $;
 
 module.exports = Backbone.View.extend({
-  // template: _.template($('#browserTemplate').html()),
+  template: _.template($('#productsTemplate').html()),
 
   // events: {
   //   "click #create": "createNew",
@@ -83,18 +128,31 @@ module.exports = Backbone.View.extend({
 
   initialize: function(){
     _.bindAll(this, 'render');
+    this.collection.bind("reset", _.bind(this.render, this));
     this.render();
   },
 
-  render: function() {
-    console.log('render');
-    this.$el.html("products");
+  renderProducts: function(content) {
+    this.collection.forEach(function(product) {
+      var productView = new ProductView({ model: product });
+      content.append(productView.render().el);
+    }, this);
+  },
 
+  render: function() {
+    this.$el.html(this.template());
+
+    if (this.collection.length > 0) {
+      this.renderProducts(this.$el.find("tbody"));
+    } else {
+      console.log('nix da');
+      // this.$el.html(this.template());
+    }
     return this;
   }
 });
 
-},{"../models/products":5,"backbone":7,"jquery":9,"underscore":10}],7:[function(require,module,exports){
+},{"./product":6,"backbone":8,"jquery":10,"underscore":11}],8:[function(require,module,exports){
 //     Backbone.js 1.1.2
 
 //     (c) 2010-2014 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -1704,7 +1762,7 @@ module.exports = Backbone.View.extend({
 
 }));
 
-},{"underscore":8}],8:[function(require,module,exports){
+},{"underscore":9}],9:[function(require,module,exports){
 //     Underscore.js 1.8.3
 //     http://underscorejs.org
 //     (c) 2009-2015 Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
@@ -3254,7 +3312,7 @@ module.exports = Backbone.View.extend({
   }
 }.call(this));
 
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.3
  * http://jquery.com/
@@ -12461,6 +12519,6 @@ return jQuery;
 
 }));
 
-},{}],10:[function(require,module,exports){
-arguments[4][8][0].apply(exports,arguments)
-},{"dup":8}]},{},[1]);
+},{}],11:[function(require,module,exports){
+arguments[4][9][0].apply(exports,arguments)
+},{"dup":9}]},{},[1]);

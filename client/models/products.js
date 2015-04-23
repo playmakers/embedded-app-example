@@ -4,6 +4,12 @@ var $ = require('jquery'),
 
 module.exports = Backbone.Collection.extend({
 
-  model: Product
+  model: Product,
+
+  url: '/shopify/products.json',
+
+  initialize: function() {
+    // this.fetch();
+  }
 
 });

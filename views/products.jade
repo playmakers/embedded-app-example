@@ -1,5 +1,15 @@
 extends layout
 
 block content
+  script#productsTemplate(type='text/template')
+    table
+      thead
+        tr
+          th Titel
+      tbody
+
+  script#productTemplate(type='text/template')
+    td <%= title %>
+
   #products
   script(src='/scripts.js')
