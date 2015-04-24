@@ -8,14 +8,9 @@ Backbone.$ = $;
 module.exports = Backbone.View.extend({
   template: _.template($('#productsTemplate').html()),
 
-  // events: {
-  //   "click #create": "createNew",
-  // },
-
   initialize: function(){
     _.bindAll(this, 'render');
     this.collection.bind("reset", _.bind(this.render, this));
-    this.render();
   },
 
   renderProducts: function(content) {
@@ -27,12 +22,8 @@ module.exports = Backbone.View.extend({
 
   render: function() {
     this.$el.html(this.template());
+    this.renderProducts(this.$el.find("tbody"));
 
-    if (this.collection.length > 0) {
-      this.renderProducts(this.$el.find("tbody"));
-    } else {
-          // this.$el.html(this.template());
-    }
     return this;
   }
 });

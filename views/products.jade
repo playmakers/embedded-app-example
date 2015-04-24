@@ -2,14 +2,22 @@ extends layout
 
 block content
   script#productsTemplate(type='text/template')
-    table
+    table.products
       thead
         tr
+          th Id
           th Titel
+          th Metafields
       tbody
 
   script#productTemplate(type='text/template')
+    td <%= id %>
     td <%= title %>
+    td.metafields
+
+  script#productMetafieldTemplate(type='text/template')
+    <%= namespace %>-<%= key %>:
+    input(size=100 value!='<%= value %>')
 
   #products
   script(src='/scripts.js')
