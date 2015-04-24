@@ -98,10 +98,11 @@ app.get('/products', function (req, res) {
 });
 
 var shopifyApi = new shopifyApiController.ShopifyApi(shopifyOptions);
-app.get(   '/shopify/:action.json', shopifyApi.get);
-app.post(  '/shopify/:action.json', shopifyApi.post);
-app.put(   '/shopify/:action.json', shopifyApi.put);
-app.delete('/shopify/:action.json', shopifyApi.delete);
+app.route(/^\/shopify\/([^.]+)\.json$/)
+  .get(shopifyApi.get)
+  .post(shopifyApi.post)
+  .put(shopifyApi.put)
+  .delete(shopifyApi.delete);
 
 var shopifyAuth = new shopifyAuthController.ShopifyAuth(shopifyOptions, '/success');
 app.get('/auth_app',   shopifyAuth.initAuth);

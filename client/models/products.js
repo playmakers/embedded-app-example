@@ -1,14 +1,14 @@
 var $ = require('jquery'),
-  Backbone     = require('backbone'),
-  Product      = require('./product');
+  Backbone = require('../shims/backbone'),
+  Product  = require('./product');
 
 module.exports = Backbone.Collection.extend({
 
   model: Product,
-
+  paramRoot: 'products',
   url: '/shopify/products.json',
 
-  initialize: function() {
+  initialize: function(models, options) {
     // this.fetch();
   }
 
