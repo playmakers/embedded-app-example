@@ -31,8 +31,7 @@ module.exports = Backbone.View.extend({
     if (this.collection.length > 0) {
       this.renderProducts(this.$el.find("tbody"));
     } else {
-      console.log('nix da');
-      // this.$el.html(this.template());
+          // this.$el.html(this.template());
     }
     return this;
   }

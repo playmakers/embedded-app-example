@@ -5,8 +5,8 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "build": "browserify client/init.js -o public/scripts.js",
-    "startl": "SHOPIFY_APP_API_KEY=a60aa532d1b3ebc91b1c5a90778ef926 SHOPIFY_APP_API_SECRET=4b581f2f8384ad22918360975f19fe30 SHOP=playmakers-test.myshopify.com TOKEN=aff9598e0970b44e192b77e7f6783a7e node app.js"
+    "build": "browserify client/init.js -o public/scripts.js -d",
+    "startl": "ENV=development SHOPIFY_APP_API_KEY=a60aa532d1b3ebc91b1c5a90778ef926 SHOPIFY_APP_API_SECRET=4b581f2f8384ad22918360975f19fe30 SHOP=playmakers-test.myshopify.com TOKEN=aff9598e0970b44e192b77e7f6783a7e node app.js"
   },
   "keywords": [
     "shopify",
@@ -17,6 +17,7 @@
     "backbone": "^1.1.2",
     "body-parser": "^1.12.3",
     "browserify": "^9.0.8",
+    "browserify-express": "^0.1.4",
     "compression": "^1.4.3",
     "express": "^4.12.3",
     "express-session": "^1.11.1",

@@ -6,9 +6,11 @@ var express             = require('express'),
   session               = require('express-session'),
   shopifyApiController  = require('./controllers/shopify_api'),
   shopifyAuthController = require('./controllers/shopify_auth'),
-  shopifyAPI            = require('shopify-node-api');
+  shopifyAPI            = require('shopify-node-api'),
+  url                   = require('url');
 
 var port = process.env.PORT || 3000,
+  development = (process.env.ENV == 'development'),
   esdk = (process.env.ESDK == 'true'),
   shopifyOptions = {
     shopify_api_key:       process.env.SHOPIFY_APP_API_KEY,
@@ -46,11 +48,22 @@ app.use(session({
 //use jade templating engine for view rendering
 app.set('view engine', 'jade');
 
+if (development) {
+  console.log("Starting in Development Mode");
+  var browserify_express = require('browserify-express');
+
+  app.use(browserify_express({
+      entry: __dirname + '/client/init.js',
+      watch: __dirname + '/client',
+      mount: 'script.js',
+      write_file: __dirname + '/public/scripts.js',
+      verbose: true,
+      minify: true
+  }));
+}
+
 //use the environment's port if specified
 app.set('port', port);
-
-
-var url = require('url');
 
 // routes
 app.get('/', function (req, res) {
