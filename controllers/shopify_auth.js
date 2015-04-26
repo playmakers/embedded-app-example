@@ -4,7 +4,7 @@
 
 var shopifyAPI = require('shopify-node-api');
 
-exports.ShopifyAuth = function(options, successUri) {
+exports.ShopifyAuth = function(options, authUri, successUri) {
   var self = this;
 
   /*
@@ -13,9 +13,9 @@ exports.ShopifyAuth = function(options, successUri) {
    * initiates the Shopify App authorisation
    */
   this.initAuth = function(req, res){
-    if (!req.session.oauth_access_token) {
+    if (!req.session.access_token) {
       res.render('escape_iframe', {
-        authPath: '/auth'
+        authPath: authUri
       });
     } else {
       res.redirect(successUri);
@@ -30,9 +30,8 @@ exports.ShopifyAuth = function(options, successUri) {
    * the scope being requested
    */
   this.startAuth = function(req, res) {
-    var shop = 'https://' + req.query.shop;
-    var authUrl = self.ShopifyAPI(shop).buildAuthURL();
-    console.log(authUrl);
+    var shop = req.query.shop,
+      authUrl = self.ShopifyAPI(shop).buildAuthURL();
     res.redirect(authUrl);
   };
 
@@ -51,21 +50,21 @@ exports.ShopifyAuth = function(options, successUri) {
         res.sendStatus(500);
         return;
       } else {
+        // TODO: use proper auth strucure
         req.session.shopUrl = shop;
-        console.log(data['access_token']);
-        req.session.oauth_access_token = data['access_token'];
+        req.session.access_token = data['access_token'];
         res.redirect(successUri);
       }
     });
   };
 
-  this.ShopifyAPI = function(shopUrl) {
+  this.ShopifyAPI = function(shop) {
     return new shopifyAPI({
-      shop: shopUrl,
-      shopify_api_key: options.shopify_api_key,
+      shop:                  shop,
+      shopify_api_key:       options.shopify_api_key,
       shopify_shared_secret: options.shopify_shared_secret,
-      shopify_scope: options.shopify_scope,
-      redirect_uri: options.redirect_uri + '/auth_token'
+      shopify_scope:         options.shopify_scope,
+      redirect_uri:          options.redirect_uri
     });
   }
 }

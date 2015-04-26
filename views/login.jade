@@ -1,0 +1,13 @@
+extends layout
+
+block content
+  h2 Install the application
+
+  form(method="GET" action="auth")
+    label.
+      Type shop name:
+
+    input(type="text" name="shop" placeholder="playmakers-test.myshopify.com" size="50")
+
+    button(type="submit").
+      Install

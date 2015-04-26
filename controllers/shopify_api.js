@@ -9,6 +9,7 @@ exports.ShopifyApi = function(options) {
 
   this.get = function(req, res) {
     var action = req.params[0];
+
     self.Shopify(req).get('/admin/' + action + '.json', function(err, data, headers) {
       res.send(data)
     });
@@ -16,6 +17,7 @@ exports.ShopifyApi = function(options) {
 
   this.post = function(req, res) {
     var action = req.params[0];
+
     self.Shopify(req).post('/admin/' + action + '.json', post_data, function(err, data, headers) {
       res.send(data)
     });
@@ -23,6 +25,7 @@ exports.ShopifyApi = function(options) {
 
   this.put = function(req, res) {
     var action = req.params[0];
+
     self.Shopify(req).put('/admin/' + action + '.json', put_data, function(err, data, headers) {
       res.send(data)
     });
@@ -30,18 +33,18 @@ exports.ShopifyApi = function(options) {
 
   this.delete = function(req, res) {
     var action = req.params[0];
+
     self.Shopify(req).delete('/admin/' + action + '.json', function(err, data, headers) {
       res.send(data)
     });
   }
 
   this.Shopify = function(req) {
-    shopUrl = req.session.shopUrl || options.shop
     return new shopifyAPI({
-      shop: shopUrl,
-      shopify_api_key: options.shopify_api_key,
+      shop:                  req.session.shopUrl || options.shop,
+      shopify_api_key:       options.shopify_api_key,
       shopify_shared_secret: options.shopify_shared_secret,
-      access_token: options.access_token
+      access_token:          req.session.access_token || options.access_token
     });
   }
 }
