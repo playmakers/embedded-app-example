@@ -27,7 +27,9 @@ exports.ShopifyAuth = function(options, loginUri, startAuthUri, successUri) {
   this.startAuth = function(req, res) {
     var shop = req.session.shop || req.query.shop,
       authUrl = self.ShopifyAPI(shop).buildAuthURL();
-    req.session.redirectTo = req.query.redirect;
+    if ( (redirectTo = req.query.redirect) ) {
+      req.session.redirectTo = redirectTo;
+    }
     res.redirect(authUrl);
   };
 

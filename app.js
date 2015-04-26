@@ -27,10 +27,10 @@ var port = process.env.PORT || 3000,
 var app = express();
 app.use(compression());
 
-//statically serve from the 'public' folder
+// statically serve from the 'public' folder
 app.use(express.static(__dirname + '/public'));
 
-//log all requests
+// log all requests
 app.use(morgan('combined'));
 
 // parse application/json
@@ -47,8 +47,11 @@ app.use(session({
   saveUninitialized: true,
 }));
 
-//use jade templating engine for view rendering
+// use jade templating engine for view rendering
 app.set('view engine', 'jade');
+
+// use the environment's port if specified
+app.set('port', port);
 
 if (development) {
   console.log('Starting in Development Mode');
@@ -64,11 +67,8 @@ if (development) {
   }));
 }
 
-//use the environment's port if specified
-app.set('port', port);
 
-// routes
-
+// --------------------- routes
 app.get('/', function (req, res) {
   res.render('index');
 });
@@ -81,10 +81,7 @@ var shopifyAuth = new shopifyAuthController.ShopifyAuth(shopifyOptions, '/login'
 app.get('/auth',       shopifyAuth.startAuth);
 app.get('/auth_token', shopifyAuth.getAccessToken);
 
-app.all('/shopify/*', shopifyAuth.requireAuth);
-app.all('/products',  shopifyAuth.requireAuth);
-
-app.get('/products', function (req, res) {
+app.get('/products', shopifyAuth.requireAuth, function (req, res) {
   res.render('products', {
     esdk: esdk,
     apiKey: shopifyOptions.shopify_api_key,
@@ -93,6 +90,7 @@ app.get('/products', function (req, res) {
 });
 
 var shopifyApi = new shopifyApiController.ShopifyApi(shopifyOptions);
+app.all('/shopify/*', shopifyAuth.requireAuth);
 app.route('/shopify/products.json')
   .get(shopifyApi.getProducts)
 app.route('/shopify/products/:product_id/metafields.json')
@@ -104,6 +102,7 @@ app.route(/^\/shopify\/([^.]+)\.json$/)
   .delete(shopifyApi.delete);
 
 
+// --------------------- start server
 app.listen(app.get('port'), function() {
   console.log('Listening on port ' + app.get('port'));
 });
