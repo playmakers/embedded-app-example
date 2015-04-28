@@ -4,46 +4,35 @@
 
 var shopifyAPI = require('shopify-node-api');
 
-exports.ShopifyAuth = function(options, authUri, successUri) {
+exports.ShopifyAuth = function(options, loginUri, startAuthUri, successUri) {
   var self = this;
 
-  /*
-   * Get /auth_app
-   *
-   * initiates the Shopify App authorisation
-   */
-  this.initAuth = function(req, res){
+  this.requireAuth = function (req, res, next) {
     if (!req.session.access_token) {
-      res.render('escape_iframe', {
-        authPath: authUri
-      });
-    } else {
-      res.redirect(successUri);
+      var shopUrl;
+      if ((shopUrl = req.query.shop)) {
+        req.session.shop = shopUrl;
+        res.render('escape_iframe', {
+          authPath: startAuthUri
+        });
+      } else {
+        res.redirect(loginUri);
+      }
     }
-  };
+    else {
+      next();
+    }
+  },
 
-  /*
-   * Get /auth_code
-   *
-   * gets the temporary token which we can exchange
-   * for a permanent token. User may be prompted to accept
-   * the scope being requested
-   */
   this.startAuth = function(req, res) {
-    var shop = req.query.shop,
+    var shop = req.session.shop || req.query.shop,
       authUrl = self.ShopifyAPI(shop).buildAuthURL();
+    req.session.redirectTo = req.query.redirect;
     res.redirect(authUrl);
   };
 
-  /*
-   * Get /auth_token
-   *
-   * get the permanent access token which is valid
-   * for the lifetime of the app install, it does
-   * not expire
-   */
   this.getAccessToken = function(req, res) {
-    var shop = req.session.shopUrl || req.query.shop;
+    var shop = req.session.shop || req.query.shop;
 
     self.ShopifyAPI(shop).exchange_temporary_token(req.query, function(err, data) {
       if (err) {
@@ -51,9 +40,14 @@ exports.ShopifyAuth = function(options, authUri, successUri) {
         return;
       } else {
         // TODO: use proper auth strucure
-        req.session.shopUrl = shop;
+        req.session.shop = shop;
         req.session.access_token = data['access_token'];
-        res.redirect(successUri);
+        if( (redirectTo = req.session.redirectTo)) {
+          delete req.session.redirectTo;
+          res.redirect(redirectTo);
+        } else {
+          res.redirect(successUri);
+        }
       }
     });
   };

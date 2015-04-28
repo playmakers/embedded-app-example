@@ -7,8 +7,8 @@ var express             = require('express'),
   session               = require('express-session'),
   shopifyApiController  = require('./controllers/shopify_api'),
   shopifyAuthController = require('./controllers/shopify_auth'),
-  shopifyAPI            = require('shopify-node-api'),
-  url                   = require('url');
+  shopifyAPI            = require('shopify-node-api');
+  // url                   = require('url');
 
 var port = process.env.PORT || 3000,
   development = (process.env.ENV == 'development'),
@@ -19,7 +19,8 @@ var port = process.env.PORT || 3000,
     shopify_scope:        'read_products',
     redirect_uri:          (process.env.SHOPIFY_REDIRECT_URI || 'http://localhost:3000') + '/auth_token',
     access_token:          process.env.TOKEN,
-    shop:                  process.env.SHOP
+    shop:                  process.env.SHOP,
+    collection_id:         32622084 // TODO move to env
   },
   Shopify = new shopifyAPI(shopifyOptions);
 
@@ -67,49 +68,35 @@ if (development) {
 app.set('port', port);
 
 // routes
-app.get('/', function (req, res) {
-  if (!req.session.access_token) {
-    var parsedUrl = url.parse(req.originalUrl, true),
-    shopUrl;
 
-    if (parsedUrl.query && (shopUrl = parsedUrl.query.shop)) {
-      req.session.shopUrl = shopUrl;
-      res.redirect('/auth_app');
-    } else {
-      res.redirect('/login');
-    }
-  }
-  else {
-    res.redirect('/success');
-  }
+app.get('/', function (req, res) {
+  res.render('index');
 });
 
 app.get('/login', function (req, res) {
   res.render('login');
 });
 
-var shopifyAuth = new shopifyAuthController.ShopifyAuth(shopifyOptions, '/auth', '/success');
-app.get('/auth_app',   shopifyAuth.initAuth);
+var shopifyAuth = new shopifyAuthController.ShopifyAuth(shopifyOptions, '/login', '/auth', '/');
 app.get('/auth',       shopifyAuth.startAuth);
 app.get('/auth_token', shopifyAuth.getAccessToken);
 
-app.get('/success', function (req, res) {
-  res.render('index', {
-    apiKey: shopifyOptions.shopify_api_key,
-    shopOrigin: req.session.shopUrl,
-    accessToken: req.session.access_token,
-  });
-});
+app.all('/shopify/*', shopifyAuth.requireAuth);
+app.all('/products',  shopifyAuth.requireAuth);
 
 app.get('/products', function (req, res) {
   res.render('products', {
     esdk: esdk,
     apiKey: shopifyOptions.shopify_api_key,
-    shopOrigin: req.session.shopUrl || shopifyOptions.shop
+    shopOrigin: req.session.shop || shopifyOptions.shop
   });
 });
 
 var shopifyApi = new shopifyApiController.ShopifyApi(shopifyOptions);
+app.route('/shopify/products.json')
+  .get(shopifyApi.getProducts)
+app.route('/shopify/products/:product_id/metafields.json')
+  .get(shopifyApi.getProductMetafields)
 app.route(/^\/shopify\/([^.]+)\.json$/)
   .get(shopifyApi.get)
   .post(shopifyApi.post)
