@@ -20,7 +20,7 @@ var port = process.env.PORT || 3000,
     redirect_uri:          (process.env.SHOPIFY_REDIRECT_URI || 'http://localhost:3000') + '/auth_token',
     access_token:          process.env.TOKEN,
     shop:                  process.env.SHOP,
-    collection_id:         32622084 // TODO move to env
+    collection_handle:     'watch'
   },
   Shopify = new shopifyAPI(shopifyOptions);
 

@@ -16,6 +16,7 @@ exports.ShopifyAuth = function(options, loginUri, startAuthUri, successUri) {
           authPath: startAuthUri
         });
       } else {
+        req.session.redirectTo = req.originalUrl;
         res.redirect(loginUri);
       }
     }
