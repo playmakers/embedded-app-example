@@ -20,7 +20,7 @@ module.exports = Backbone.View.extend({
       id: this.model.id,
     }));
 
-    this.$el.find(".metafields").html(productMetafieldsView.el);
+    productMetafieldsView.setElement(this.$el.find(".metafields"));
     return this;
   }
 

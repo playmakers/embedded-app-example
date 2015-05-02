@@ -18,7 +18,8 @@ exports.ShopifyApi = function(options) {
   },
 
   this.post = function(req, res) {
-    var action = req.params[0];
+    var action = req.params[0],
+    post_data = req.body;
 
     self.Shopify(req).post('/admin/' + action + '.json', post_data, function(err, data, headers) {
       res.send(data)
@@ -26,7 +27,8 @@ exports.ShopifyApi = function(options) {
   },
 
   this.put = function(req, res) {
-    var action = req.params[0];
+    var action = req.params[0],
+    put_data = req.body;
 
     self.Shopify(req).put('/admin/' + action + '.json', put_data, function(err, data, headers) {
       res.send(data)
@@ -47,7 +49,7 @@ exports.ShopifyApi = function(options) {
       if (collection) {
         var params = {
           collection_id: collection.id,
-          fields: 'id,title,vendor',
+          fields: 'id,title,vendor'
         };
         shopify.get('/admin/products.json?' + qs.encode(params), function(err, data, headers) {
           res.send(data)
@@ -61,9 +63,10 @@ exports.ShopifyApi = function(options) {
 
   this.getProductMetafields = function(req, res) {
     var product_id = req.params.product_id,
+    namespace = options.collection_handle,
     params = {
-      namespace: 'watch',
-      fields: 'id,namespace,key,value',
+      // namespace: namespace,
+      fields: 'id,namespace,key,value'
     };
 
     self.Shopify(req).get('/admin/products/' + product_id + '/metafields.json?' + qs.encode(params), function(err, data, headers) {
@@ -74,7 +77,7 @@ exports.ShopifyApi = function(options) {
 
   this.withCollection = function(shopify, handle, cb) {
     var params = {
-      fields: 'id,handle',
+      fields: 'id,handle'
     };
     shopify.get('/admin/smart_collections.json?' + qs.encode(params), function(err, data, headers) {
       var collection = data["smart_collections"].find(function(collection) {

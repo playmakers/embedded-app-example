@@ -16,7 +16,7 @@ var port = process.env.PORT || 3000,
   shopifyOptions = {
     shopify_api_key:       process.env.SHOPIFY_APP_API_KEY,
     shopify_shared_secret: process.env.SHOPIFY_APP_API_SECRET,
-    shopify_scope:        'read_products',
+    shopify_scope:        'read_products,write_products',
     redirect_uri:          (process.env.SHOPIFY_REDIRECT_URI || 'http://localhost:3000') + '/auth_token',
     access_token:          process.env.TOKEN,
     shop:                  process.env.SHOP,
@@ -65,6 +65,12 @@ if (development) {
       verbose: true,
       minify: true
   }));
+
+  app.all('*', function(req, res, next) {
+    req.session.shop         = shopifyOptions.shop;
+    req.session.access_token = shopifyOptions.access_token;
+    next();
+  });
 }
 
 
@@ -81,8 +87,8 @@ var shopifyAuth = new shopifyAuthController.ShopifyAuth(shopifyOptions, '/login'
 app.get('/auth',       shopifyAuth.startAuth);
 app.get('/auth_token', shopifyAuth.getAccessToken);
 
-app.get('/products', shopifyAuth.requireAuth, function(req, res) {
-  res.render('products', {
+app.get('/products/watch', shopifyAuth.requireAuth, function(req, res) {
+  res.render('watch', {
     esdk: esdk,
     apiKey: shopifyOptions.shopify_api_key,
     shopUrl: (req.session.shop || shopifyOptions.shop)
@@ -99,6 +105,7 @@ app.route(/^\/shopify\/([^.]+)\.json$/)
   .get(shopifyApi.get)
   .post(shopifyApi.post)
   .put(shopifyApi.put)
+  .patch(shopifyApi.put)
   .delete(shopifyApi.delete);
 
 

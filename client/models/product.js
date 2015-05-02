@@ -21,7 +21,7 @@ module.exports = Backbone.Model.extend({
   metafields: function() {
     // TODO caching
     var m = new ProductMetafields([], { product: this });
-    m.fetch({ reset: true});
+    m.fetch({reset: true, product: this});
     return m;
   }
 });

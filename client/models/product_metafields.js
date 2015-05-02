@@ -1,4 +1,5 @@
 var $ = require('jquery'),
+  _ = require('underscore'),
   Backbone         = require('../shims/backbone'),
   ProductMetafield = require('./product_metafield');
 
@@ -12,7 +13,20 @@ module.exports = Backbone.Collection.extend({
 
   initialize: function(models, options) {
     this.product = options.product;
-    // this.fetch();
-  }
+  },
 
+  createNew: function(values) {
+    var values = _.extend(values, {
+      namespace: 'watch',
+      value_type: 'string'
+    })
+    self = this,
+    metafield = new ProductMetafield(values, { product: this.product });
+
+    metafield.save({}, {
+      success: function() {
+        self.fetch({reset: true, product: self.product})
+      }
+    });
+  }
 });

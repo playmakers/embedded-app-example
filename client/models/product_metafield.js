@@ -6,11 +6,22 @@ module.exports = Backbone.Model.extend({
 
   paramRoot: 'metafield',
   urlRoot: function() {
-    return '/shopify/products/' + this.product.id + '/metafields/' + this.id + '.json#';
+    var url = '/shopify/products/' + this.product.id + '/metafields';
+    if (this.id) {
+      url = url + '/' + this.id;
+    }
+
+    return url + '.json#';
+  },
+
+  update: function(value) {
+    this.patch({
+      value: value
+    });
   },
 
   initialize: function(attributes, options) {
-    this.product = attributes.product;
+    this.product = options.product;
   }
 
 });

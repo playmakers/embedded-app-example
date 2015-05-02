@@ -9,7 +9,6 @@ module.exports = Backbone.Collection.extend({
   url: '/shopify/products.json',
 
   initialize: function(models, options) {
-    // this.fetch();
   }
 
 });

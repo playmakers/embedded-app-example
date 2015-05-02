@@ -5,19 +5,31 @@ block content
     table.products
       thead
         tr
-          th Id
           th Titel
-          th Metafields
+          th Mitbewerber Urls
       tbody
 
   script#productTemplate(type='text/template')
-    td <%= id %>
-    td <%= vendor %> <%= title %>
+    td(valign='top') <%= vendor %> <%= title %>
     td.metafields
 
+  script#productMetafieldsTemplate(type='text/template')
+    ul
+    button.new +
+    .addMetafield
+      select(name='key')
+        option boss-hoss
+        option playmakers
+        option tes
+      input(size=100  name='value')
+      button.add +
+
   script#productMetafieldTemplate(type='text/template')
-    <%= namespace %>-<%= key %>:
-    input(size=100 value!='<%= value %>')
+    .showMetafield
+      b <%= namespace %> - <%= key %>:
+      input(size=100  name='value' value!='<%= value %>')
+      button.del -
+      button.update +
 
   if esdk
     script.
