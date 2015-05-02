@@ -12,12 +12,25 @@ block content
 
   script#productTemplate(type='text/template')
     td <%= id %>
-    td <%= title %>
+    td <%= vendor %> <%= title %>
     td.metafields
 
   script#productMetafieldTemplate(type='text/template')
     <%= namespace %>-<%= key %>:
     input(size=100 value!='<%= value %>')
+
+  if esdk
+    script.
+      ShopifyApp.ready(function(){
+        ShopifyApp.Bar.initialize({
+          buttons: {
+            secondary: [
+              { label: "Einstellungen", callback: function(){ alert('help'); } }
+            ],
+          },
+          title: 'Mitbewerberanalyse',
+        });
+      });
 
   #products
   script(src='/scripts.js')

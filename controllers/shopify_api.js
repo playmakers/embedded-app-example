@@ -62,7 +62,7 @@ exports.ShopifyApi = function(options) {
   this.getProductMetafields = function(req, res) {
     var product_id = req.params.product_id,
     params = {
-      namespace: 'monitor',
+      namespace: 'watch',
       fields: 'id,namespace,key,value',
     };
 

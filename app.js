@@ -81,11 +81,11 @@ var shopifyAuth = new shopifyAuthController.ShopifyAuth(shopifyOptions, '/login'
 app.get('/auth',       shopifyAuth.startAuth);
 app.get('/auth_token', shopifyAuth.getAccessToken);
 
-app.get('/products', shopifyAuth.requireAuth, function (req, res) {
+app.get('/products', shopifyAuth.requireAuth, function(req, res) {
   res.render('products', {
     esdk: esdk,
     apiKey: shopifyOptions.shopify_api_key,
-    shopOrigin: req.session.shop || shopifyOptions.shop
+    shopUrl: (req.session.shop || shopifyOptions.shop)
   });
 });
 

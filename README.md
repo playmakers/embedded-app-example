@@ -17,8 +17,8 @@ npm run startl
 - [x] test shopify integration
 - [x] select products by dedicated categroy
 - [x] select metatags by namespace: namepace=???
-- [ ] update admin page title, spinner, buttons
-- [ ] proper success page, show inline
+- [x] update admin page title, spinner, buttons
+- [x] proper success page, show inline
 - [ ] update/add/delete metafields
 - [ ] move to marionette?
 - [ ] move to handlebars?, Pre-Compile

@@ -15,6 +15,7 @@ module.exports = Backbone.View.extend({
   render: function() {
     var productMetafieldsView = new ProductMetafieldsView({ collection: this.model.metafields() });
     this.$el.html(this.template({
+      vendor: this.model.get('vendor'),
       title: this.model.get('title'),
       id: this.model.id,
     }));

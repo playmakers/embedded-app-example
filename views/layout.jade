@@ -2,12 +2,13 @@ doctype html
 html
   head
     link(rel='stylesheet', href='/style.css')
-    script(src='https://cdn.shopify.com/s/assets/external/app.js')
     if esdk
+      script(src='https://cdn.shopify.com/s/assets/external/app.js')
       script.
         ShopifyApp.init({
           apiKey:       '#{apiKey}',
-          shopOrigin:   '#{shopUrl}'
+          shopOrigin:   'https://#{shopUrl}',
+          debug: true,
         });
 
   body
