@@ -20,7 +20,10 @@ var port = process.env.PORT || 3000,
     redirect_uri:          (process.env.SHOPIFY_REDIRECT_URI || 'http://localhost:3000') + '/auth_token',
     access_token:          process.env.TOKEN,
     shop:                  process.env.SHOP,
-    collection_handle:     'watch'
+    namespaces: {
+      watch: 'playmakers-watch',
+      sync:  'playmakers-sync'
+    }
   },
   Shopify = new shopifyAPI(shopifyOptions);
 
@@ -87,13 +90,19 @@ var shopifyAuth = new shopifyAuthController.ShopifyAuth(shopifyOptions, '/login'
 app.get('/auth',       shopifyAuth.startAuth);
 app.get('/auth_token', shopifyAuth.getAccessToken);
 
-app.get('/products/watch', shopifyAuth.requireAuth, function(req, res) {
-  res.render('watch', {
-    esdk: esdk,
-    apiKey: shopifyOptions.shopify_api_key,
-    shopUrl: (req.session.shop || shopifyOptions.shop)
-  });
-});
+var product_metafields_action = function(namespace) {
+  return function(req, res) {
+    res.render('product_metafields', {
+      esdk: esdk,
+      apiKey: shopifyOptions.shopify_api_key,
+      shopUrl: (req.session.shop || shopifyOptions.shop),
+      namespace: namespace
+    });
+  }
+}
+
+app.get('/products/watch', shopifyAuth.requireAuth, product_metafields_action(shopifyOptions.namespaces.watch));
+app.get('/products/sync',  shopifyAuth.requireAuth, product_metafields_action(shopifyOptions.namespaces.sync));
 
 var shopifyApi = new shopifyApiController.ShopifyApi(shopifyOptions);
 app.all('/shopify/*', shopifyAuth.requireAuth);

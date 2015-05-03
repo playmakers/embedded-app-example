@@ -1,6 +1,7 @@
 doctype html
 html
   head
+    link(rel='stylesheet', href='/basscss.min.css')
     link(rel='stylesheet', href='/style.css')
     if esdk
       script(src='https://cdn.shopify.com/s/assets/external/app.js')
@@ -12,4 +13,5 @@ html
         });
 
   body
-    block content
+    .clearfix.p2
+      block content

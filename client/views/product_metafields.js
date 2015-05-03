@@ -10,8 +10,8 @@ module.exports = Backbone.View.extend({
   // tagName: 'ul',
 
   events: {
-    'click .new': 'showAddMetafield',
-    'click .add': 'addMetafield',
+    'click .add':  'addMetafield',
+    'keyup input': 'checkInput'
   },
 
   initialize: function() {
@@ -20,16 +20,17 @@ module.exports = Backbone.View.extend({
     this.collection.bind('remove', _.bind(this.render, this));
   },
 
-  showAddMetafield: function() {
-    this.$el.find('.addMetafield').show();
-    this.$el.find('button.new').hide();
-  },
-
   addMetafield: function() {
     this.collection.createNew({
-      key: this.$el.find('.addMetafield select[name=key]').val(),
-      value: this.$el.find('.addMetafield input[name=value]').val()
+      namespace: this.$el.find('.addMetafield :input[name=namespace]').val(),
+      value:     this.$el.find('.addMetafield :input[name=value]').val()
     });
+  },
+
+  checkInput: function(event) {
+    if(event.keyCode == 13) {
+      this.addMetafield();
+    }
   },
 
   renderProductMetafields: function(content) {
@@ -42,7 +43,6 @@ module.exports = Backbone.View.extend({
   render: function() {
     this.$el.html(this.template());
     this.renderProductMetafields(this.$el.find('ul'));
-    this.$el.find('.addMetafield').hide();
 
     return this;
   }

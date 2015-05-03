@@ -18,10 +18,13 @@ module.exports = Backbone.Model.extend({
     return this.get('title')
   },
 
-  metafields: function() {
+  metafields: function(namespace) {
     // TODO caching
-    var m = new ProductMetafields([], { product: this });
-    m.fetch({reset: true, product: this});
-    return m;
+    var metafields = new ProductMetafields([], {
+      product: this,
+      namespace: namespace
+    });
+    metafields.fetch({reset: true, product: this});
+    return metafields;
   }
 });

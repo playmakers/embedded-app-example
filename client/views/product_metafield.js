@@ -6,10 +6,12 @@ module.exports = Backbone.View.extend({
   template: _.template($('#productMetafieldTemplate').html()),
 
   tagName: 'li',
+  className: 'flex flex-justify',
 
   events: {
     'click .update': 'updateMetafield',
-    'click .del':    'deleteMetafield'
+    'click .del':    'deleteMetafield',
+    'keyup input':   'checkInput'
   },
 
   initialize: function() {
@@ -23,6 +25,12 @@ module.exports = Backbone.View.extend({
 
   deleteMetafield: function() {
     this.model.destroy();
+  },
+
+  checkInput: function(event) {
+    if(event.keyCode == 13) {
+      this.updateMetafield();
+    }
   },
 
   render: function() {

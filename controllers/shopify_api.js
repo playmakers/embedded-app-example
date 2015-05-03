@@ -44,8 +44,9 @@ exports.ShopifyApi = function(options) {
   }
 
   this.getProducts = function(req, res) {
-    var shopify = self.Shopify(req);
-    self.withCollection(shopify, options.collection_handle, function(collection) {
+    var shopify = self.Shopify(req),
+    collection_handle = req.query.collection_handle;
+    self.withCollection(shopify, collection_handle, function(collection) {
       if (collection) {
         var params = {
           collection_id: collection.id,
@@ -63,9 +64,9 @@ exports.ShopifyApi = function(options) {
 
   this.getProductMetafields = function(req, res) {
     var product_id = req.params.product_id,
-    namespace = options.collection_handle,
+    namespace = req.query.namespace,
     params = {
-      // namespace: namespace,
+      namespace: namespace,
       fields: 'id,namespace,key,value'
     };
 

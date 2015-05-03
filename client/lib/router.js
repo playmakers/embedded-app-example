@@ -11,13 +11,19 @@ var app        = require('./app'),
 
 module.exports = Backbone.Router.extend({
   routes: {
-    "watch": "_index"
+    "watch": "_index",
+    "sync": "_index"
   },
 
   _index: function(itemId) {
-    var products = new Products();
+    var products = new Products([], {
+      collection_handle: $('#products').data('collectionHandle')
+    });
+
     products.fetch({reset: true});
 
-    $('#products').html(new ProductsView({collection: products}).$el);
+    $('#products').html(new ProductsView({
+      collection: products
+    }).$el);
   },
 });

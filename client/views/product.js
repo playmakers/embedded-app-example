@@ -13,14 +13,17 @@ module.exports = Backbone.View.extend({
   },
 
   render: function() {
-    var productMetafieldsView = new ProductMetafieldsView({ collection: this.model.metafields() });
     this.$el.html(this.template({
       vendor: this.model.get('vendor'),
       title: this.model.get('title'),
       id: this.model.id,
     }));
 
-    productMetafieldsView.setElement(this.$el.find(".metafields"));
+    var metafields = this.$el.find(".metafields"),
+    productMetafieldsView = new ProductMetafieldsView({
+      el: metafields,
+      collection: this.model.metafields(metafields.data('namespace'))
+    });
     return this;
   }
 

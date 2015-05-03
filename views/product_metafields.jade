@@ -1,0 +1,47 @@
+extends layout
+
+block content
+  script#productsTemplate(type='text/template')
+    table.table-light
+      thead
+        tr
+          th Titel
+          th Urls
+      tbody
+
+  script#productTemplate(type='text/template')
+    td(valign='top') <%= vendor %> <%= title %>
+    td.metafields(data-namespace='#{namespace}')
+
+  script#productMetafieldsTemplate(type='text/template')
+    ul.list-reset
+    .addMetafield.flex
+      .flex-grow
+        input(hidden=true name='namespace' value='#{namespace}')
+        input.full-width.field-light(name='value')
+      .menu.flex-none
+        button.add.button.button-small.ml1 Hinzufügen
+
+  script#productMetafieldTemplate(type='text/template')
+    b.flex-none <%= key %>:&nbsp;
+    .flex-grow
+      input.full-width.field-light(name='value' value!='<%= value %>')
+    .menu.flex-none
+      button.del.button.button-small.button-outline.red.ml1 -
+      button.update.button.button-small.button-outline.green.ml1 +
+
+  if esdk
+    script.
+      ShopifyApp.ready(function(){
+        ShopifyApp.Bar.initialize({
+          buttons: {
+            secondary: [
+              { label: "Einstellungen", callback: function(){ alert('help'); } }
+            ],
+          },
+          title: 'Marktanalyse',
+        });
+      });
+
+  #products(data-collection-handle='#{namespace}')
+  script(src='/scripts.js')
