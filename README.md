@@ -1,4 +1,4 @@
-# Meta
+# Playmakers shopifyApp
 
 A simple Shopify app to expose product metafields easly
 

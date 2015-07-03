@@ -11,8 +11,8 @@ var app        = require('./app'),
 
 module.exports = Backbone.Router.extend({
   routes: {
-    "watch": "_index",
-    "sync": "_index"
+    "watch/config": "_index",
+    "sync/config": "_index"
   },
 
   _index: function(itemId) {

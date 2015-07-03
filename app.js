@@ -90,19 +90,33 @@ var shopifyAuth = new shopifyAuthController.ShopifyAuth(shopifyOptions, '/login'
 app.get('/auth',       shopifyAuth.startAuth);
 app.get('/auth_token', shopifyAuth.getAccessToken);
 
-var product_metafields_action = function(namespace) {
+
+var product_action = function(template_name, title, back_url, namespace) {
   return function(req, res) {
-    res.render('product_metafields', {
+    res.render(template_name, {
       esdk: esdk,
       apiKey: shopifyOptions.shopify_api_key,
       shopUrl: (req.session.shop || shopifyOptions.shop),
+      title: title,
+      back_url: back_url,
       namespace: namespace
     });
   }
 }
 
-app.get('/products/watch', shopifyAuth.requireAuth, product_metafields_action(shopifyOptions.namespaces.watch));
-app.get('/products/sync',  shopifyAuth.requireAuth, product_metafields_action(shopifyOptions.namespaces.sync));
+app.get('/products/watch', shopifyAuth.requireAuth,
+  product_action('product_watch', 'Marktanalyse', '/products/watch/config', shopifyOptions.namespaces.watch)
+);
+app.get('/products/watch/config', shopifyAuth.requireAuth,
+  product_action('product_metafields', 'Marktanalyse - Einstellungen', '/products/watch', shopifyOptions.namespaces.watch)
+);
+
+app.get('/products/sync', shopifyAuth.requireAuth,
+  product_action('product_sync',  'Bestandssyncro', '/products/sync/config', shopifyOptions.namespaces.sync)
+);
+app.get('/products/sync/config', shopifyAuth.requireAuth,
+  product_action('product_metafields', 'Bestandssyncro - Einstellungen', '/products/sync', shopifyOptions.namespaces.sync)
+);
 
 var shopifyApi = new shopifyApiController.ShopifyApi(shopifyOptions);
 app.all('/shopify/*', shopifyAuth.requireAuth);

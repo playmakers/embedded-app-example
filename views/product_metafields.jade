@@ -34,12 +34,21 @@ block content
     script.
       ShopifyApp.ready(function(){
         ShopifyApp.Bar.initialize({
+          title: '#{title}',
+          breadcrumb: {
+            label: "Products",
+            href: "/products",
+            target: "shopify"
+          },
           buttons: {
-            secondary: [
-              { label: "Einstellungen", callback: function(){ alert('help'); } }
+            primary: [
+              {
+                label: "Fertig",
+                target: "app",
+                href: "#{back_url}"
+              }
             ],
           },
-          title: 'Marktanalyse',
         });
       });
 

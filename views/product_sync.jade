@@ -1,0 +1,27 @@
+extends layout
+
+block content
+  if esdk
+    script.
+      ShopifyApp.ready(function(){
+        ShopifyApp.Bar.initialize({
+          buttons: {
+            secondary: [
+              {
+                label: "Einstellungen",
+                target: "app",
+                href: "#{back_url}"
+              }
+            ],
+          },
+          title: "#{title}",
+          breadcrumb: {
+            label: "Products",
+            href: "/products",
+            target: "shopify"
+          }
+        });
+      });
+
+  #main
+    hi
